@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { DotenvAdaptModule } from './common/lib/env/dotenv-adopt.module';
+import { LibraryModule } from './common/lib/library.module';
 
 @Module({
-  imports: [DotenvAdaptModule],
+  imports: [LibraryModule],
   controllers: [],
   providers: [],
 })
