@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { DotenvAdaptModule } from './common/lib/env/dotenv-adopt.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [DotenvAdaptModule],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
