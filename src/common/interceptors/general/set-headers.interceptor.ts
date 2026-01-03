@@ -1,0 +1,37 @@
+import { ArgumentsHost, CallHandler, Injectable, NestInterceptor } from "@nestjs/common";
+import { map, Observable } from "rxjs";
+import { TimeLoggerLibrary } from "../../lib/logger/time-logger.library";
+import { Request, Response } from "express";
+import { SetHeadersResponseInterface } from "../interface/set-headers-response.interface";
+import { Implemented } from "../../decorators/implemented.decoration";
+
+@Injectable()
+export class SetHeadersInterceptor<T> implements NestInterceptor {
+  constructor(private readonly timeLogger: TimeLoggerLibrary) {}
+
+  @Implemented()
+  public intercept(context: ArgumentsHost, next: CallHandler<any>): Observable<any> {
+    const req = context.switchToHttp().getRequest<Request>();
+    const res = context.switchToHttp().getResponse<Response>();
+
+    this.timeLogger.receiveRequest(req);
+
+    return next.handle().pipe(
+      map((data: SetHeadersResponseInterface<T>) => {
+        const { statusCode, message, headerKey, headerValues } = data;
+        this.timeLogger.sendResponse(req);
+
+        if (headerValues.length >= 2) {
+          headerValues.forEach((headerValue, idx) => {
+            res.setHeader(headerKey + (idx + 1), JSON.stringify(headerValue));
+          });
+        } else {
+          res.setHeader(headerKey, JSON.stringify(headerValues[0]));
+        }
+
+        res.status(data.statusCode).setHeader("X-Powered-By", "");
+        return { success: true, ...{ statusCode, message } };
+      }),
+    );
+  }
+}
