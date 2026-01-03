@@ -19,7 +19,7 @@ class NestCoreConfig {
     this.setMiddlewares();
     this.setStaticAssets();
     this.setApiVersioning();
-    this.setSwagger();
+    this.setCors();
   }
 
   public async run() {
@@ -58,7 +58,7 @@ class NestCoreConfig {
               validationErrors.reduce(
                 (acc, error) => ({
                   ...acc,
-                  // [error.property]: Object.values(error.constraints),
+                  [error.property]: error.constraints,
                 }),
                 {},
               ),
@@ -92,6 +92,14 @@ class NestCoreConfig {
     //     });
     //   }
     // });
+  }
+
+  private setCors() {
+    this.app.enableCors({
+      origin: true,
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+      credentials: true,
+    });
   }
 
   private setApiVersioning() {
