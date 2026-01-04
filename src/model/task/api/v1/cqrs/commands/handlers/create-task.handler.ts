@@ -4,7 +4,7 @@ import { Implemented } from "../../../../../../../common/decorators/implemented.
 import { Transactional } from "../../../../../../../common/interfaces/initializer/transactional";
 import { TaskRepositoryPayload } from "../../../../common/task-repository.payload";
 import { TaskEntity } from "../../../../../entities/task.entity";
-import { FindTasksWithStartDateQuery } from "../../queries/events/find-tasks-with-start-date.query";
+import { FetchTasksWithStartDateQuery } from "../../queries/events/fetch-tasks-with-start-date.query";
 import { TaskType } from "../../../../../types/task-type.type";
 
 interface CreateTaskProps {
@@ -21,8 +21,8 @@ export class CreateTaskHandler implements ICommandHandler<CreateTaskCommand> {
     private readonly transaction: Transactional<TaskRepositoryPayload>,
   ) {}
 
-  private findTasks(startDate: string): Promise<TaskEntity[]> {
-    const query = new FindTasksWithStartDateQuery(startDate);
+  private fetchTasks(startDate: string): Promise<TaskEntity[]> {
+    const query = new FetchTasksWithStartDateQuery(startDate, "full");
     return this.queryBus.execute(query);
   }
 
@@ -37,7 +37,7 @@ export class CreateTaskHandler implements ICommandHandler<CreateTaskCommand> {
   @Implemented()
   public async execute(command: CreateTaskCommand): Promise<TaskEntity> {
     const { body } = command;
-    const tasks = await this.findTasks(body.startDate);
+    const tasks = await this.fetchTasks(body.startDate);
     const seq = this.calculateSeq(tasks);
     const props: CreateTaskProps = { seq, title: body.title, type: body.type, startDate: body.startDate };
 

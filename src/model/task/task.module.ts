@@ -7,7 +7,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { Transactional } from "../../common/interfaces/initializer/transactional";
 import { TaskTransactionInitializer } from "./api/common/task-transaction.initializer";
 import { CreateTaskHandler } from "./api/v1/cqrs/commands/handlers/create-task.handler";
-import { FindTasksWithStartDateHandler } from "./api/v1/cqrs/queries/handlers/find-tasks-with-start-date.handler";
+import { FetchTasksWithStartDateHandler } from "./api/v1/cqrs/queries/handlers/fetch-tasks-with-start-date.handler";
 
 @Module({
   imports: [TypeOrmModule.forFeature([TaskEntity]), LibraryModule, CqrsModule],
@@ -33,7 +33,7 @@ import { FindTasksWithStartDateHandler } from "./api/v1/cqrs/queries/handlers/fi
         // commands
         ...[CreateTaskHandler],
         // queries
-        ...[FindTasksWithStartDateHandler],
+        ...[FetchTasksWithStartDateHandler],
         // validations
         // ...[IsExistCartIdHandler],
       ],
