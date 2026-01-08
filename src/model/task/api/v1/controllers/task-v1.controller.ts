@@ -13,6 +13,8 @@ import { ModifyTaskTitleDto } from "../../dto/request/modify-task-title.dto";
 import { ModifyTaskTitleCommand } from "../cqrs/commands/events/modify-task-title.command";
 import { ModifyTaskTypeDto } from "../../dto/request/modify-task-type.dto";
 import { ModifyTaskTypeCommand } from "../cqrs/commands/events/modify-task-type.command";
+import { ModifyTaskStatusDto } from "../../dto/request/modify-task-status.dto";
+import { ModifyTaskStatusCommand } from "../cqrs/commands/events/modify-task-status.command";
 
 @Controller({ path: "/task", version: "1" })
 export class TaskV1Controller {
@@ -75,5 +77,14 @@ export class TaskV1Controller {
     await this.commandBus.execute(command);
 
     return { statusCode: 200, message: "테스크 타입이 수정되었습니다." };
+  }
+
+  @UseInterceptors(TransactionInterceptor)
+  @Patch("/status")
+  public async modifyTaskStatus(@Body() dto: ModifyTaskStatusDto): Promise<ApiResultInterface<void>> {
+    const command = new ModifyTaskStatusCommand(dto);
+    await this.commandBus.execute(command);
+
+    return { statusCode: 200, message: `선택한 테스크 상태가 ${dto.status ? "완료" : "미완료"}로 변경되었습니다.` };
   }
 }
