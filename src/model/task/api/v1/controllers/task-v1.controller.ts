@@ -11,6 +11,8 @@ import { ChangeTaskSeqDto } from "../../dto/request/change-task-seq.dto";
 import { ChangeTaskSeqCommand } from "../cqrs/commands/events/change-task-seq.command";
 import { ModifyTaskTitleDto } from "../../dto/request/modify-task-title.dto";
 import { ModifyTaskTitleCommand } from "../cqrs/commands/events/modify-task-title.command";
+import { ModifyTaskTypeDto } from "../../dto/request/modify-task-type.dto";
+import { ModifyTaskTypeCommand } from "../cqrs/commands/events/modify-task-type.command";
 
 @Controller({ path: "/task", version: "1" })
 export class TaskV1Controller {
@@ -64,5 +66,14 @@ export class TaskV1Controller {
     await this.commandBus.execute(command);
 
     return { statusCode: 200, message: "테스크 제목이 수정되었습니다." };
+  }
+
+  @UseInterceptors(TransactionInterceptor)
+  @Patch("/type")
+  public async modifyTaskType(@Body() dto: ModifyTaskTypeDto): Promise<ApiResultInterface<void>> {
+    const command = new ModifyTaskTypeCommand(dto);
+    await this.commandBus.execute(command);
+
+    return { statusCode: 200, message: "테스크 타입이 수정되었습니다." };
   }
 }
