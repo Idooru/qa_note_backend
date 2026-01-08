@@ -9,6 +9,7 @@ import { TaskTransactionInitializer } from "./api/common/task-transaction.initia
 import { CreateTaskHandler } from "./api/v1/cqrs/commands/handlers/create-task.handler";
 import { FetchTasksWithStartDateHandler } from "./api/v1/cqrs/queries/handlers/fetch-tasks-with-start-date.handler";
 import { ChangeTaskSeqHandler } from "./api/v1/cqrs/commands/handlers/change-task-seq.handler";
+import { ModifyTaskTitleHandler } from "./api/v1/cqrs/commands/handlers/modify-task-title.handler";
 
 @Module({
   imports: [TypeOrmModule.forFeature([TaskEntity]), LibraryModule, CqrsModule],
@@ -32,7 +33,7 @@ import { ChangeTaskSeqHandler } from "./api/v1/cqrs/commands/handlers/change-tas
       // cqrs handlers
       ...[
         // commands
-        ...[CreateTaskHandler, ChangeTaskSeqHandler],
+        ...[CreateTaskHandler, ChangeTaskSeqHandler, ModifyTaskTitleHandler],
         // queries
         ...[FetchTasksWithStartDateHandler],
         // validations
