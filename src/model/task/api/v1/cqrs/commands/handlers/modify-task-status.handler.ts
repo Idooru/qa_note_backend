@@ -17,9 +17,6 @@ export class ModifyTaskStatusHandler implements ICommandHandler<ModifyTaskStatus
     const { dto } = command;
     const { ids, status } = dto;
 
-    console.log(ids);
-    console.log(status);
-
     this.transaction.initRepository();
     const result = ids.map((id) => this.modifyTaskStatus(id, status));
     await Promise.all(result);

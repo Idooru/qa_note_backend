@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Query, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, Query, UseInterceptors } from "@nestjs/common";
 import { TransactionInterceptor } from "../../../../../common/interceptors/general/transaction.interceptor";
 import { ApiResultInterface } from "../../../../../common/interceptors/interface/api-result.interface";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
@@ -15,6 +15,8 @@ import { ModifyTaskTypeDto } from "../../dto/request/modify-task-type.dto";
 import { ModifyTaskTypeCommand } from "../cqrs/commands/events/modify-task-type.command";
 import { ModifyTaskStatusDto } from "../../dto/request/modify-task-status.dto";
 import { ModifyTaskStatusCommand } from "../cqrs/commands/events/modify-task-status.command";
+import { DeleteTaskDto } from "../../dto/request/delete-task.dto";
+import { DeleteTaskCommand } from "../cqrs/commands/events/delete-task.command";
 
 @Controller({ path: "/task", version: "1" })
 export class TaskV1Controller {
@@ -86,5 +88,14 @@ export class TaskV1Controller {
     await this.commandBus.execute(command);
 
     return { statusCode: 200, message: `선택한 테스크 상태가 ${dto.status ? "완료" : "미완료"}로 변경되었습니다.` };
+  }
+
+  @UseInterceptors(TransactionInterceptor)
+  @Delete("/")
+  public async deleteTask(@Body() dto: DeleteTaskDto): Promise<ApiResultInterface<void>> {
+    const command = new DeleteTaskCommand(dto);
+    await this.commandBus.execute(command);
+
+    return { statusCode: 200, message: "선택한 테스크가 삭제되었습니다." };
   }
 }

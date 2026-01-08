@@ -12,6 +12,7 @@ import { ChangeTaskSeqHandler } from "./api/v1/cqrs/commands/handlers/change-tas
 import { ModifyTaskTitleHandler } from "./api/v1/cqrs/commands/handlers/modify-task-title.handler";
 import { ModifyTaskTypeHandler } from "./api/v1/cqrs/commands/handlers/modify-task-type.handler";
 import { ModifyTaskStatusHandler } from "./api/v1/cqrs/commands/handlers/modify-task-status.handler";
+import { DeleteTaskHandler } from "./api/v1/cqrs/commands/handlers/delete-task.handler";
 
 @Module({
   imports: [TypeOrmModule.forFeature([TaskEntity]), LibraryModule, CqrsModule],
@@ -35,7 +36,14 @@ import { ModifyTaskStatusHandler } from "./api/v1/cqrs/commands/handlers/modify-
       // cqrs handlers
       ...[
         // commands
-        ...[CreateTaskHandler, ChangeTaskSeqHandler, ModifyTaskTitleHandler, ModifyTaskTypeHandler, ModifyTaskStatusHandler],
+        ...[
+          CreateTaskHandler,
+          ChangeTaskSeqHandler,
+          ModifyTaskTitleHandler,
+          ModifyTaskTypeHandler,
+          ModifyTaskStatusHandler,
+          DeleteTaskHandler,
+        ],
         // queries
         ...[FetchTasksWithStartDateHandler],
         // validations
