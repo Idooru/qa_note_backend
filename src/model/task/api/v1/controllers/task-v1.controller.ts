@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Query, UseInterceptors } from "@nestjs/common";
 import { TransactionInterceptor } from "../../../../../common/interceptors/general/transaction.interceptor";
 import { ApiResultInterface } from "../../../../../common/interceptors/interface/api-result.interface";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
@@ -7,6 +7,8 @@ import { CreateTaskCommand } from "../cqrs/commands/events/create-task.command";
 import { TaskEntity } from "../../../entities/task.entity";
 import { FetchInterceptor } from "../../../../../common/interceptors/general/fetch.interceptor";
 import { FetchMode, FetchTasksWithStartDateQuery } from "../cqrs/queries/events/fetch-tasks-with-start-date.query";
+import { ChangeTaskSeqDto } from "../../dto/request/change-task-seq.dto";
+import { ChangeTaskSeqCommand } from "../cqrs/commands/events/change-task-seq.command";
 
 @Controller({ path: "/task", version: "1" })
 export class TaskV1Controller {
@@ -44,5 +46,14 @@ export class TaskV1Controller {
       message: "테스크를 생성하였습니다.",
       result,
     };
+  }
+
+  @UseInterceptors(TransactionInterceptor)
+  @Patch("/seq")
+  public async changeTaskSeq(@Body() dto: ChangeTaskSeqDto): Promise<ApiResultInterface<void>> {
+    const command = new ChangeTaskSeqCommand(dto);
+    await this.commandBus.execute(command);
+
+    return { statusCode: 200, message: "테스크 순서가 변경되었습니다." };
   }
 }
