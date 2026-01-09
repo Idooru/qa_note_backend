@@ -18,20 +18,10 @@ import { DeleteTaskHandler } from "./api/v1/cqrs/commands/handlers/delete-task.h
   imports: [TypeOrmModule.forFeature([TaskEntity]), LibraryModule, CqrsModule],
   controllers: [TaskV1Controller],
   providers: [
-    // { provide: 'cart-select', useValue: cartSelect },
     { provide: Transactional, useClass: TaskTransactionInitializer },
     // common
     ...[TaskTransactionInitializer],
-    // v1 logic
-    // ...[
-    //   CartService,
-    //   CartSearchRepository,
-    //   CartUpdateRepository,
-    //   CartValidateRepository,
-    //   CartSearcher,
-    //   CartValidator,
-    // ],
-    // v2 logic
+    // logic
     ...[
       // cqrs handlers
       ...[
@@ -46,12 +36,8 @@ import { DeleteTaskHandler } from "./api/v1/cqrs/commands/handlers/delete-task.h
         ],
         // queries
         ...[FetchTasksWithStartDateHandler],
-        // validations
-        // ...[IsExistCartIdHandler],
       ],
     ],
-    // helpers
-    // ...[CommonCartCommandHelper],
   ],
   exports: [],
 })
