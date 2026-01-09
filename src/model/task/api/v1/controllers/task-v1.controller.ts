@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post, Query, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, Query, UseInterceptors, Param } from "@nestjs/common";
 import { TransactionInterceptor } from "../../../../../common/interceptors/general/transaction.interceptor";
 import { ApiResultInterface } from "../../../../../common/interceptors/interface/api-result.interface";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
@@ -17,6 +17,7 @@ import { ModifyTaskStatusDto } from "../../dto/request/modify-task-status.dto";
 import { ModifyTaskStatusCommand } from "../cqrs/commands/events/modify-task-status.command";
 import { DeleteTaskDto } from "../../dto/request/delete-task.dto";
 import { DeleteTaskCommand } from "../cqrs/commands/events/delete-task.command";
+import { UpdateTaskSeqAfterDeleteCommand } from "../cqrs/commands/events/update-task-seq-after-delete.command";
 
 @Controller({ path: "/task", version: "1" })
 export class TaskV1Controller {
@@ -97,5 +98,14 @@ export class TaskV1Controller {
     await this.commandBus.execute(command);
 
     return { statusCode: 200, message: "선택한 테스크가 삭제되었습니다." };
+  }
+
+  @UseInterceptors(TransactionInterceptor)
+  @Patch("/after-delete/start-date/:startDate")
+  public async updateTaskSeqAfterDelete(@Param("startDate") startDate: string): Promise<ApiResultInterface<void>> {
+    const command = new UpdateTaskSeqAfterDeleteCommand(startDate);
+    await this.commandBus.execute(command);
+
+    return { statusCode: 200, message: "테스크 삭제후 테스크 순서를 변경합니다." };
   }
 }
